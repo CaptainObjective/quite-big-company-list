@@ -1,0 +1,17 @@
+query Companies(
+  $take: Int!
+  $where: CompanyWhereInput
+  $orderBy: [CompanyOrderByInput!]
+) {
+  companies(
+    take: $take
+    where: $where
+    orderBy: $orderBy
+  ) {
+    id
+    name
+    identifier
+    foundationDate
+    country
+  }
+}
