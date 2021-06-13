@@ -1,0 +1,11 @@
+export { FindUniqueCompanyResolver } from "./Company/FindUniqueCompanyResolver";
+export { FindFirstCompanyResolver } from "./Company/FindFirstCompanyResolver";
+export { FindManyCompanyResolver } from "./Company/FindManyCompanyResolver";
+export { CreateCompanyResolver } from "./Company/CreateCompanyResolver";
+export { DeleteCompanyResolver } from "./Company/DeleteCompanyResolver";
+export { UpdateCompanyResolver } from "./Company/UpdateCompanyResolver";
+export { DeleteManyCompanyResolver } from "./Company/DeleteManyCompanyResolver";
+export { UpdateManyCompanyResolver } from "./Company/UpdateManyCompanyResolver";
+export { UpsertCompanyResolver } from "./Company/UpsertCompanyResolver";
+export { AggregateCompanyResolver } from "./Company/AggregateCompanyResolver";
+export { GroupByCompanyResolver } from "./Company/GroupByCompanyResolver";
