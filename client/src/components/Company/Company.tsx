@@ -1,4 +1,4 @@
-import { Box, Heading, Text, Stack } from '@chakra-ui/layout';
+import { Heading, Text, Stack } from '@chakra-ui/layout';
 import format from 'date-fns/format';
 import Flag from 'react-flags';
 

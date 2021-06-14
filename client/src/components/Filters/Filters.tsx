@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Stack } from '@chakra-ui/layout';
+import { Stack } from '@chakra-ui/layout';
 import { Input, Button, Select } from '@chakra-ui/react';
 
 import { QueryParameters } from '../../App';
