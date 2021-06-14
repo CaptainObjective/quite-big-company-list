@@ -1,53 +1,51 @@
+import { useEffect } from 'react';
 import { Box } from '@chakra-ui/layout';
 import { Spinner } from '@chakra-ui/spinner';
-import { useFindCompaniesQuery } from '../../generated/graphql';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
+import { FindCompaniesQueryVariables, useFindCompaniesQuery } from '../../generated/graphql';
 import { Company } from '../Company/Company';
+import { customScrollBarStyles } from './styles';
 
-const pageSize = 50;
+type Props = {
+  queryParameters: FindCompaniesQueryVariables;
+};
 
-const Companies = () => {
-  const { data, loading, error, fetchMore } = useFindCompaniesQuery({ variables: { take: pageSize } });
+const Companies = ({ queryParameters }: Props) => {
+  const { data, loading, error, fetchMore, refetch } = useFindCompaniesQuery({ variables: queryParameters });
+
+  useEffect(() => {
+    refetch(queryParameters);
+  }, [queryParameters]);
 
   if (loading) return <Spinner />;
+
   if (!data || error) {
     console.log(error);
-    return null;
+    return <span> Something went wrong... :( </span>;
   }
 
   const next = async () => {
+    const paginationParameters = {
+      skip: 1,
+      cursor: { id: data.companies[data.companies.length - 1].id },
+    };
+
     try {
       await fetchMore({
-        variables: { take: pageSize, skip: 1, cursor: { id: data.companies[data.companies.length - 1].id } },
+        variables: { ...queryParameters, ...paginationParameters },
       });
     } catch (error) {}
   };
 
   return (
-    <Box
-      sx={{
-        '&::-webkit-scrollbar': {
-          width: '16px',
-          borderRadius: '8px',
-          backgroundColor: `gray.100`,
-        },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: `teal.200`,
-        },
-      }}
-      id="companies-list-container"
-      padding="2rem"
-      width="100%"
-      maxHeight="80vh"
-      overflowY="auto"
-    >
+    <Box sx={customScrollBarStyles} id="companies-list-container" width="100%" maxHeight="80vh" overflowY="auto">
       <InfiniteScroll
         scrollableTarget="companies-list-container"
         dataLength={data.companies.length}
         next={next}
         hasMore={true}
-        loader="loading..."
+        loader={<Spinner />}
       >
         {data.companies.map(company => (
           <Company key={company.id} {...company} />

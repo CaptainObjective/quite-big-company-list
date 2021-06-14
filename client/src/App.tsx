@@ -1,32 +1,25 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { Container } from '@chakra-ui/react';
-import { Companies } from './components/Companies/Companies';
+import { useState } from 'react';
 
-const client = new ApolloClient({
-  uri: 'http://localhost:4000',
-  cache: new InMemoryCache({
-    typePolicies: {
-      Query: {
-        fields: {
-          companies: {
-            keyArgs: false,
-            merge(existing = [], incoming) {
-              return [...existing, ...incoming];
-            },
-          },
-        },
-      },
-    },
-  }),
-});
+import { Companies } from './components/Companies/Companies';
+import { Filters } from './components/Filters/Filters';
+import { FindCompaniesQueryVariables } from './generated/graphql';
+
+const pageSize = 50;
+export type QueryParameters = Pick<FindCompaniesQueryVariables, 'where' | 'orderBy'>;
 
 const App = () => {
+  const [queryParameters, setQueryParameters] = useState<FindCompaniesQueryVariables>({ take: pageSize });
+
+  const applyFilters = (filters: QueryParameters) => {
+    setQueryParameters(prev => ({ ...prev, ...filters }));
+  };
+
   return (
-    <ApolloProvider client={client}>
-      <Container display="flex" marginTop="5rem" justifyContent="center" maxW="container.lg">
-        <Companies />
-      </Container>
-    </ApolloProvider>
+    <Container display="flex" justifyContent="center" flexDirection="column" maxW="container.lg">
+      <Filters applyFilters={applyFilters} />
+      <Companies queryParameters={queryParameters} />
+    </Container>
   );
 };
 
