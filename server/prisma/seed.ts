@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   const companies = [];
-  const companiesCount = 100_000; //1_000_000;
+  const companiesCount = 100_000;
 
   for (let i = 0; i < companiesCount; i++) {
     companies.push({
@@ -16,10 +16,9 @@ async function main() {
     });
   }
 
-  const deleteAllCompanies = prisma.company.deleteMany({});
   const createCompanies = companies.map(company => prisma.company.create({ data: company }));
 
-  await prisma.$transaction([deleteAllCompanies, ...createCompanies]);
+  await prisma.$transaction([...createCompanies]);
 }
 
 main()
