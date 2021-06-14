@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Box } from '@chakra-ui/layout';
+import { Box, Stack } from '@chakra-ui/layout';
 import { Input, Button, Select } from '@chakra-ui/react';
 
 import { QueryParameters } from '../../App';
-import { SortOrder } from '../../generated/graphql';
+import { CompanyOrderByInput, SortOrder } from '../../generated/graphql';
 
 type Props = {
   applyFilters: (filters: QueryParameters) => void;
@@ -12,18 +12,22 @@ type Props = {
 const Filters = ({ applyFilters }: Props) => {
   const [countryCode, setCountryCode] = useState('');
   const [identifier, setIdentifier] = useState('');
-  const [foundationDate, setFoundationDate] = useState(SortOrder.Asc);
-  const [companyName, setCompanyName] = useState(SortOrder.Asc);
+  const [foundationDate, setFoundationDate] = useState('');
+  const [companyName, setCompanyName] = useState('');
 
   const handleApplyFiltersClick = () => {
+    const orderBy: CompanyOrderByInput[] = [];
+    if (foundationDate) orderBy.push({ foundationDate: foundationDate as SortOrder });
+    if (companyName) orderBy.push({ name: companyName as SortOrder });
+
     applyFilters({
-      orderBy: [{ foundationDate: foundationDate }, { name: companyName }],
+      orderBy,
       where: { AND: [{ country: { contains: countryCode } }, { identifier: { contains: identifier } }] },
     });
   };
 
   return (
-    <Box margin="2rem 0" display="flex" justifyContent="space-between">
+    <Stack margin="2rem 0" display="flex" justifyContent="space-between" direction={['column', 'row']}>
       <Input
         placeholder="Country code"
         width="auto"
@@ -36,18 +40,20 @@ const Filters = ({ applyFilters }: Props) => {
         value={identifier}
         onChange={e => setIdentifier(e.target.value)}
       ></Input>
-      <Select width="auto" value={foundationDate} onChange={e => setFoundationDate(e.target.value as SortOrder)}>
+      <Select width="auto" onChange={e => setFoundationDate(e.target.value as SortOrder)}>
+        <option value="">Pick...</option>
         <option value={SortOrder.Desc}>Newest to oldest</option>
         <option value={SortOrder.Asc}>Oldest to newest</option>
       </Select>
-      <Select width="auto" value={companyName} onChange={e => setCompanyName(e.target.value as SortOrder)}>
-        <option value={SortOrder.Asc}>Ascending</option>
-        <option value={SortOrder.Desc}>Descending</option>
+      <Select width="auto" onChange={e => setCompanyName(e.target.value as SortOrder)}>
+        <option value="">Pick...</option>
+        <option value={SortOrder.Asc}>Names A-Z</option>
+        <option value={SortOrder.Desc}>Names Z-A</option>
       </Select>
       <Button colorScheme="teal" size="md" width="auto" onClick={handleApplyFiltersClick}>
         Apply Filters
       </Button>
-    </Box>
+    </Stack>
   );
 };
 

@@ -3,7 +3,7 @@ import { Box } from '@chakra-ui/layout';
 import { Spinner } from '@chakra-ui/spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { FindCompaniesQueryVariables, useFindCompaniesQuery } from '../../generated/graphql';
+import { FindCompaniesQueryVariables, useFindCompaniesLazyQuery } from '../../generated/graphql';
 import { Company } from '../Company/Company';
 import { customScrollBarStyles } from './styles';
 
@@ -12,13 +12,15 @@ type Props = {
 };
 
 const Companies = ({ queryParameters }: Props) => {
-  const { data, loading, error, fetchMore, refetch } = useFindCompaniesQuery({ variables: queryParameters });
+  const [findCompanies, { data, loading, error, fetchMore }] = useFindCompaniesLazyQuery({
+    variables: queryParameters,
+  });
 
   useEffect(() => {
-    refetch(queryParameters);
-  }, [queryParameters]);
+    findCompanies({ variables: queryParameters });
+  }, [queryParameters, findCompanies]);
 
-  if (loading) return <Spinner />;
+  if (loading || !fetchMore) return <Spinner />;
 
   if (!data || error) {
     console.log(error);
@@ -35,11 +37,22 @@ const Companies = ({ queryParameters }: Props) => {
       await fetchMore({
         variables: { ...queryParameters, ...paginationParameters },
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  if (data.companies.length === 0) return <span>No items found :(</span>;
+
   return (
-    <Box sx={customScrollBarStyles} id="companies-list-container" width="100%" maxHeight="80vh" overflowY="auto">
+    <Box
+      sx={customScrollBarStyles}
+      id="companies-list-container"
+      width="100%"
+      maxHeight="80vh"
+      overflowY="auto"
+      textAlign="center"
+    >
       <InfiniteScroll
         scrollableTarget="companies-list-container"
         dataLength={data.companies.length}

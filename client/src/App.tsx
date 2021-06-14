@@ -16,7 +16,7 @@ const App = () => {
   };
 
   return (
-    <Container display="flex" justifyContent="center" flexDirection="column" maxW="container.lg">
+    <Container display="flex" justifyContent="center" flexDirection="column" maxW="container.lg" mb="1rem">
       <Filters applyFilters={applyFilters} />
       <Companies queryParameters={queryParameters} />
     </Container>
