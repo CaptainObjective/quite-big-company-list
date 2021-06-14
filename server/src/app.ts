@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server';
 import { buildSchema } from 'type-graphql';
-import { FindManyCompanyResolver, CompanyMaxAggregate } from './generated/typegraphql-prisma';
+import { FindManyCompanyResolver, AggregateCompanyResolver } from './generated/typegraphql-prisma';
 import { PrismaClient } from '@prisma/client';
 
 interface Context {
@@ -10,7 +10,7 @@ interface Context {
 
 (async () => {
   const schema = await buildSchema({
-    resolvers: [FindManyCompanyResolver, CompanyMaxAggregate],
+    resolvers: [FindManyCompanyResolver, AggregateCompanyResolver],
     validate: false,
   });
 

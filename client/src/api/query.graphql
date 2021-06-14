@@ -1,10 +1,14 @@
-query Companies(
+query FindCompanies(
   $take: Int!
+  $skip: Int
+  $cursor: CompanyWhereUniqueInput
   $where: CompanyWhereInput
   $orderBy: [CompanyOrderByInput!]
 ) {
   companies(
     take: $take
+    cursor: $cursor
+    skip: $skip
     where: $where
     orderBy: $orderBy
   ) {
@@ -13,5 +17,11 @@ query Companies(
     identifier
     foundationDate
     country
+  }
+
+  aggregateCompany {
+    count: _count {
+      total: _all
+    }
   }
 }

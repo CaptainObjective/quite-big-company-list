@@ -16,6 +16,15 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AggregateCompany = {
+  __typename?: 'AggregateCompany';
+  _count?: Maybe<CompanyCountAggregate>;
+  _avg?: Maybe<CompanyAvgAggregate>;
+  _sum?: Maybe<CompanySumAggregate>;
+  _min?: Maybe<CompanyMinAggregate>;
+  _max?: Maybe<CompanyMaxAggregate>;
+};
+
 export type Company = {
   __typename?: 'Company';
   id: Scalars['Int'];
@@ -25,6 +34,45 @@ export type Company = {
   foundationDate: Scalars['DateTime'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type CompanyAvgAggregate = {
+  __typename?: 'CompanyAvgAggregate';
+  id?: Maybe<Scalars['Float']>;
+};
+
+export type CompanyCountAggregate = {
+  __typename?: 'CompanyCountAggregate';
+  id: Scalars['Int'];
+  name: Scalars['Int'];
+  identifier: Scalars['Int'];
+  country: Scalars['Int'];
+  foundationDate: Scalars['Int'];
+  createdAt: Scalars['Int'];
+  updatedAt: Scalars['Int'];
+  _all: Scalars['Int'];
+};
+
+export type CompanyMaxAggregate = {
+  __typename?: 'CompanyMaxAggregate';
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  identifier?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  foundationDate?: Maybe<Scalars['DateTime']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type CompanyMinAggregate = {
+  __typename?: 'CompanyMinAggregate';
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  identifier?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  foundationDate?: Maybe<Scalars['DateTime']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type CompanyOrderByInput = {
@@ -46,6 +94,11 @@ export enum CompanyScalarFieldEnum {
   CreatedAt = 'createdAt',
   UpdatedAt = 'updatedAt'
 }
+
+export type CompanySumAggregate = {
+  __typename?: 'CompanySumAggregate';
+  id?: Maybe<Scalars['Int']>;
+};
 
 export type CompanyWhereInput = {
   AND?: Maybe<Array<CompanyWhereInput>>;
@@ -126,6 +179,7 @@ export type NestedStringFilter = {
 export type Query = {
   __typename?: 'Query';
   companies: Array<Company>;
+  aggregateCompany: AggregateCompany;
 };
 
 
@@ -136,6 +190,15 @@ export type QueryCompaniesArgs = {
   take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   distinct?: Maybe<Array<CompanyScalarFieldEnum>>;
+};
+
+
+export type QueryAggregateCompanyArgs = {
+  where?: Maybe<CompanyWhereInput>;
+  orderBy?: Maybe<Array<CompanyOrderByInput>>;
+  cursor?: Maybe<CompanyWhereUniqueInput>;
+  take?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
 };
 
 export enum SortOrder {
@@ -157,60 +220,81 @@ export type StringFilter = {
   not?: Maybe<NestedStringFilter>;
 };
 
-export type CompaniesQueryVariables = Exact<{
+export type FindCompaniesQueryVariables = Exact<{
   take: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<CompanyWhereUniqueInput>;
   where?: Maybe<CompanyWhereInput>;
   orderBy?: Maybe<Array<CompanyOrderByInput> | CompanyOrderByInput>;
 }>;
 
 
-export type CompaniesQuery = (
+export type FindCompaniesQuery = (
   { __typename?: 'Query' }
   & { companies: Array<(
     { __typename?: 'Company' }
     & Pick<Company, 'id' | 'name' | 'identifier' | 'foundationDate' | 'country'>
-  )> }
+  )>, aggregateCompany: (
+    { __typename?: 'AggregateCompany' }
+    & { count?: Maybe<(
+      { __typename?: 'CompanyCountAggregate' }
+      & { total: CompanyCountAggregate['_all'] }
+    )> }
+  ) }
 );
 
 
-export const CompaniesDocument = gql`
-    query Companies($take: Int!, $where: CompanyWhereInput, $orderBy: [CompanyOrderByInput!]) {
-  companies(take: $take, where: $where, orderBy: $orderBy) {
+export const FindCompaniesDocument = gql`
+    query FindCompanies($take: Int!, $skip: Int, $cursor: CompanyWhereUniqueInput, $where: CompanyWhereInput, $orderBy: [CompanyOrderByInput!]) {
+  companies(
+    take: $take
+    cursor: $cursor
+    skip: $skip
+    where: $where
+    orderBy: $orderBy
+  ) {
     id
     name
     identifier
     foundationDate
     country
   }
+  aggregateCompany {
+    count: _count {
+      total: _all
+    }
+  }
 }
     `;
 
 /**
- * __useCompaniesQuery__
+ * __useFindCompaniesQuery__
  *
- * To run a query within a React component, call `useCompaniesQuery` and pass it any options that fit your needs.
- * When your component renders, `useCompaniesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useFindCompaniesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindCompaniesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useCompaniesQuery({
+ * const { data, loading, error } = useFindCompaniesQuery({
  *   variables: {
  *      take: // value for 'take'
+ *      skip: // value for 'skip'
+ *      cursor: // value for 'cursor'
  *      where: // value for 'where'
  *      orderBy: // value for 'orderBy'
  *   },
  * });
  */
-export function useCompaniesQuery(baseOptions: Apollo.QueryHookOptions<CompaniesQuery, CompaniesQueryVariables>) {
+export function useFindCompaniesQuery(baseOptions: Apollo.QueryHookOptions<FindCompaniesQuery, FindCompaniesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CompaniesQuery, CompaniesQueryVariables>(CompaniesDocument, options);
+        return Apollo.useQuery<FindCompaniesQuery, FindCompaniesQueryVariables>(FindCompaniesDocument, options);
       }
-export function useCompaniesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CompaniesQuery, CompaniesQueryVariables>) {
+export function useFindCompaniesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindCompaniesQuery, FindCompaniesQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CompaniesQuery, CompaniesQueryVariables>(CompaniesDocument, options);
+          return Apollo.useLazyQuery<FindCompaniesQuery, FindCompaniesQueryVariables>(FindCompaniesDocument, options);
         }
-export type CompaniesQueryHookResult = ReturnType<typeof useCompaniesQuery>;
-export type CompaniesLazyQueryHookResult = ReturnType<typeof useCompaniesLazyQuery>;
-export type CompaniesQueryResult = Apollo.QueryResult<CompaniesQuery, CompaniesQueryVariables>;
+export type FindCompaniesQueryHookResult = ReturnType<typeof useFindCompaniesQuery>;
+export type FindCompaniesLazyQueryHookResult = ReturnType<typeof useFindCompaniesLazyQuery>;
+export type FindCompaniesQueryResult = Apollo.QueryResult<FindCompaniesQuery, FindCompaniesQueryVariables>;
