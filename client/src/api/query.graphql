@@ -19,7 +19,7 @@ query FindCompanies(
     country
   }
 
-  aggregateCompany {
+  aggregateCompany(where: $where) {
     count: _count {
       total: _all
     }

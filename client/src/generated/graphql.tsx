@@ -259,7 +259,7 @@ export const FindCompaniesDocument = gql`
     foundationDate
     country
   }
-  aggregateCompany {
+  aggregateCompany(where: $where) {
     count: _count {
       total: _all
     }

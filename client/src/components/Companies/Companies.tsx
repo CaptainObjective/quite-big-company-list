@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Box } from '@chakra-ui/layout';
+import { Box, Text } from '@chakra-ui/layout';
 import { Spinner } from '@chakra-ui/spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -20,11 +20,11 @@ const Companies = ({ queryParameters }: Props) => {
     findCompanies({ variables: queryParameters });
   }, [queryParameters, findCompanies]);
 
-  if (loading || !fetchMore) return <Spinner />;
+  if (loading || !fetchMore) return <Spinner data-testid="spinner" margin="0 auto" />;
 
   if (!data || error) {
     console.log(error);
-    return <span> Something went wrong... :( </span>;
+    return <Text margin="0 auto"> Something went wrong... :( </Text>;
   }
 
   const next = async () => {
@@ -57,7 +57,8 @@ const Companies = ({ queryParameters }: Props) => {
         scrollableTarget="companies-list-container"
         dataLength={data.companies.length}
         next={next}
-        hasMore={true}
+        hasMore={data.companies.length !== data.aggregateCompany.count?.total}
+        endMessage={<Text>No more companies to show</Text>}
         loader={<Spinner />}
       >
         {data.companies.map(company => (

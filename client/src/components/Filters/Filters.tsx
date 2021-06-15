@@ -40,12 +40,20 @@ const Filters = ({ applyFilters }: Props) => {
         value={identifier}
         onChange={e => setIdentifier(e.target.value)}
       ></Input>
-      <Select width="auto" onChange={e => setFoundationDate(e.target.value as SortOrder)}>
+      <Select
+        data-testid="foundation-date-select"
+        width="auto"
+        onChange={e => setFoundationDate(e.target.value as SortOrder)}
+      >
         <option value="">Pick...</option>
         <option value={SortOrder.Desc}>Newest to oldest</option>
         <option value={SortOrder.Asc}>Oldest to newest</option>
       </Select>
-      <Select width="auto" onChange={e => setCompanyName(e.target.value as SortOrder)}>
+      <Select
+        data-testid="company-name-select"
+        width="auto"
+        onChange={e => setCompanyName(e.target.value as SortOrder)}
+      >
         <option value="">Pick...</option>
         <option value={SortOrder.Asc}>Names A-Z</option>
         <option value={SortOrder.Desc}>Names Z-A</option>
